@@ -80,7 +80,7 @@ def ensure_option_map():
 # )
 
 TYPES = {
-    CONF_OUTPUT_SOURCE_PRIORITY: ("POP00", None),
+    CONF_OUTPUT_SOURCE_PRIORITY: ("^S007POP0", "^S007POP1" None),
     CONF_CHARGER_SOURCE_PRIORITY: ("PCP03", None),
     CONF_SOLAR_POWER_PRIORITY: ("PSP0", None),
     CONF_MACHINE_TYPE: ("PDI", None),
