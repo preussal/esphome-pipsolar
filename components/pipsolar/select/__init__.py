@@ -58,7 +58,7 @@ def ensure_option_map():
 # }
 
 # CONFIG_SCHEMA = cv.All(
-#     select.select_schema(cv.COMPONENT_SCHEMA).extend(
+#     select.SELECT_SCHEMA.extend(cv.COMPONENT_SCHEMA).extend(
 #         {
 #             cv.GenerateID(): cv.declare_id(PipSolarSelect),
 #             cv.GenerateID(CONF_MODBUS_CONTROLLER_ID): cv.use_id(ModbusController),
@@ -91,7 +91,7 @@ TYPES = {
 }
 
 
-PIPSELECT_SCHEMA = select.select_schema(
+PIPSELECT_SCHEMA = select.SELECT_SCHEMA.extend(
     {
         cv.GenerateID(): cv.declare_id(PipsolarSelect),
         cv.Optional(CONF_OPTIONSMAP): ensure_option_map(),
