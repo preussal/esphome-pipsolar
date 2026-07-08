@@ -222,10 +222,11 @@ class Pipsolar : public uart::UARTDevice, public PollingComponent {
   select::Select *battery_float_voltage_select_{nullptr};
 
   std::string format_voltage_string_(uint16_t value) {
-    char buf[16];
+    char buf[10];
     sprintf(buf, "%.1f", value / 10.0f);
     return std::string(buf);
   }
+
   friend class PipsolarSelect;
   static const size_t PIPSOLAR_READ_BUFFER_LENGTH = 150;  // maximum supported answer length
   static const size_t COMMAND_QUEUE_LENGTH = 10;

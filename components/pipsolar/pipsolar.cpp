@@ -869,7 +869,7 @@ void Pipsolar::send_mchgv_command() {
 
   char command[32];
   sprintf(command, "MCHGV%03u,%03u", this->last_bulk_voltage_, this->last_float_voltage_);
- 
+
   // Sendet den kombinierten String mit PI18-Befehlslänge ^S015 an das Protokoll
   this->write_command_with_prefix_and_crc("^S015", command);
 }
