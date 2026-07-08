@@ -873,7 +873,7 @@ void Pipsolar::send_mchgv_command() {
   sprintf(command, "^S015MCHGV%03u,%03u", this->last_bulk_voltage_, this->last_float_voltage_);
 
   // Nutzt die echte, existierende Schreibmethode deines Branches
-  this->write_command(command);
+  this->switch_command(command);
 
 
 void Pipsolar::update() {}
