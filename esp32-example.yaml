@@ -8,27 +8,20 @@
 
 substitutions:
   name: pipsolar
-  #external_components_source: github://syssi/esphome-pipsolar@pi18
-  external_components_source: github://preussal/esphome-pipsolar@PI18_LV5048_Hybrid_V2      # Stable
-  #external_components_source: github://preussal/esphome-pipsolar@PI18_LV5048_Hybrid_V2_DEV # Manny Dummy Commits, learning by doing
-  tx_pin: GPIO1
-  rx_pin: GPIO3
+  tx_pin: GPIO16
+  rx_pin: GPIO17
 
 esphome:
   name: ${name}
   min_version: 2024.6.0
   project:
-    name: "syssi.esphome-pipsolar@pi18"
+    name: "syssi.esphome-pipsolar@main"
     version: 1.0.0
 
 esp32:
   board: wemos_d1_mini32
   framework:
     type: esp-idf
-
-external_components:
-  - source: ${external_components_source}
-    refresh: 0s
 
 wifi:
   ssid: !secret wifi_ssid
@@ -39,12 +32,17 @@ ota:
 
 logger:
   baud_rate: 0
+  level: DEBUG
 
+# If you use Home Assistant please remove this `mqtt` section and uncomment the `api` component!
+# The native API has many advantages over MQTT: https://esphome.io/components/api.html#advantages-over-mqtt
 mqtt:
   broker: !secret mqtt_host
   username: !secret mqtt_username
   password: !secret mqtt_password
   id: mqtt_client
+
+# api:
 
 uart:
   - id: uart_0
@@ -237,19 +235,23 @@ text_sensor:
   - platform: pipsolar
     pipsolar_id: inverter0
     device_mode:
-      name: "${name} Device Mode"
-    battery_power_direction:
-      name: "${name} Battery Power direction"
-    load_connection:
-      name: "${name} AC Load connection"
-    mppt1_charger_status:
-      name: "${name} MPPT1 charger status"
-    #mppt2_charger_status:
-    #  name: "${name} MPPT2 charger status"
-    line_power_direction:
-      name: "${name} Grid Power direction"
-    dc_ac_power_direction:
-      name: "${name} DC/AC Power direction"
+      name: "${name} device_mode"
+      filters:
+        map:
+          - P -> Power on mode
+          - S -> Standby mode
+          - L -> Line mode
+          - B -> Battery mode
+          - F -> Fault mode
+          - D -> Shutdown mode
+#    last_qpigs:
+#      name: "${name} last_qpigs"
+#    last_qpiri:
+#      name: "${name} last_qpiri"
+#    last_qmod:
+#      name: "${name} last_qmod"
+#    last_qflag:
+#      name: "${name} last_qflag"
 
     # Settable
     battery_type:
