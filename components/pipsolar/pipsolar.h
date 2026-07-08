@@ -210,7 +210,22 @@ class Pipsolar : public uart::UARTDevice, public PollingComponent {
   void dump_config() override;
   void update() override;
 
+  void set_battery_bulk_voltage_select(select::Select *select) { this->battery_bulk_voltage_select_ = select; }
+  void set_battery_float_voltage_select(select::Select *select) { this->battery_float_voltage_select_ = select; }
+  void send_mchgv_command();
+  uint16_t last_bulk_voltage_{552};
+  uint16_t last_float_voltage_{540};
+
+
  protected:
+  select::Select *battery_bulk_voltage_select_{nullptr};
+  select::Select *battery_float_voltage_select_{nullptr};
+
+  std::string format_voltage_string_(uint16_t value) {
+    char buf[16];
+    sprintf(buf, "%.1f", value / 10.0f);
+    return std::string(buf);
+  }
   friend class PipsolarSelect;
   static const size_t PIPSOLAR_READ_BUFFER_LENGTH = 150;  // maximum supported answer length
   static const size_t COMMAND_QUEUE_LENGTH = 10;

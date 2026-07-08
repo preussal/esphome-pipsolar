@@ -19,7 +19,8 @@ CONF_INPUT_VOLTAGE_RANGE = "input_voltage_range"
 CONF_CURRENT_MAX_CHARGING_CURRENT = "current_max_charging_current"
 CONF_CURRENT_MAX_AC_CHARGING_CURRENT = "current_max_ac_charging_current"
 CONF_BATTERY_UNDER_VOLTAGE = "battery_under_voltage"
-
+CONF_BATTERY_BULK_VOLTAGE = "battery_bulk_voltage"
+CONF_BATTERY_FLOAT_VOLTAGE = "battery_float_voltage"
 
 PipsolarSelect = pipsolar_ns.class_("PipsolarSelect", cg.Component, select.Select)
 
@@ -88,6 +89,8 @@ TYPES = {
     CONF_CURRENT_MAX_CHARGING_CURRENT: ("MCHGC0,010", None),
     CONF_CURRENT_MAX_AC_CHARGING_CURRENT: ("MUCHGC0,002", None),
     CONF_BATTERY_UNDER_VOLTAGE: ("PSDV400", None),
+    CONF_BATTERY_BULK_VOLTAGE: ("MCHGV", None),
+    CONF_BATTERY_FLOAT_VOLTAGE: ("MCHGV", None),
 }
 
 
@@ -128,6 +131,10 @@ async def to_code(config):
                     cg.add(var.add_status_mapping(mappingkey, status_map[mappingkey]))
             # cg.add(var.set_optimistic(conf[CONF_OPTIMISTIC]))
 
+            if type == "battery_bulk_voltage":
+                cg.add(var.set_is_bulk_voltage(True))
+            if type == "battery_float_voltage":
+                cg.add(var.set_is_float_voltage(True))
 
 # async def to_code(config):
 #     value_type = config[CONF_VALUE_TYPE]

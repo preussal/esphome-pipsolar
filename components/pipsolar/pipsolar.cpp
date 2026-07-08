@@ -138,9 +138,19 @@ void Pipsolar::loop() {
 
         if (this->battery_bulk_voltage_) {
           this->battery_bulk_voltage_->publish_state(value_battery_bulk_voltage_ * 0.1);
+
+          this->last_bulk_voltage_ = value_battery_bulk_voltage_;
+          if (this->battery_bulk_voltage_select_ != nullptr && !this->battery_bulk_voltage_select_->has_state()) {
+            this->battery_bulk_voltage_select_->publish_state(this->format_voltage_string_(this->last_bulk_voltage_));
+          }
         }
         if (this->battery_float_voltage_) {
           this->battery_float_voltage_->publish_state(value_battery_float_voltage_ * 0.1);
+
+          this->last_float_voltage_ = value_battery_float_voltage_;
+          if (this->battery_float_voltage_select_ != nullptr && !this->battery_float_voltage_select_->has_state()) {
+            this->battery_float_voltage_select_->publish_state(this->format_voltage_string_(this->last_float_voltage_));
+          }
         }
 
         // special for battery_type Text
@@ -845,6 +855,25 @@ void Pipsolar::dump_config() {
     }
   }
 }
+
+void Pipsolar::send_mchgv_command() {
+  // Sicherheits-Sperre: Erhaltungsladung (Float) MUSS kleiner als Hauptladung (Bulk) sein
+  if (this->last_float_voltage_ >= this->last_bulk_voltage_) {
+    this->last_float_voltage_ = this->last_bulk_voltage_ - 1; // Erzwinge 0.1V weniger
+
+    // Korrigiere die Anzeige direkt in Home Assistant
+    if (this->battery_float_voltage_select_ != nullptr) {
+      this->battery_float_voltage_select_->publish_state(this->format_voltage_string_(this->last_float_voltage_));
+    }
+  }
+
+  char command[32];
+  sprintf(command, "MCHGV%03u,%03u", this->last_bulk_voltage_, this->last_float_voltage_);
+ 
+  // Sendet den kombinierten String mit PI18-Befehlslänge ^S015 an das Protokoll
+  this->write_command_with_prefix_and_crc("^S015", command);
+}
+
 
 void Pipsolar::update() {}
 

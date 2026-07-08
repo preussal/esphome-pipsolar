@@ -29,12 +29,19 @@ class PipsolarSelect : public Component, public select::Select {
   void control(const std::string &value) override;
   void map_and_publish(std::string &value);
 
+  void set_is_bulk_voltage(bool is_bulk) { this->is_bulk_voltage_ = is_bulk; }
+  void set_is_float_voltage(bool is_float) { this->is_float_voltage_ = is_float; }
+
  protected:
   std::map<std::string, std::string> mapping_;
   std::map<std::string, std::string> status_mapping_;
 
   Pipsolar *parent_;
   bool optimistic_{false};
+
+  bool is_bulk_voltage_{false};
+  bool is_float_voltage_{false};
+
 };
 
 }  // namespace pipsolar
