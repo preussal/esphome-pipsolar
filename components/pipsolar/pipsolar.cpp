@@ -136,19 +136,21 @@ void Pipsolar::loop() {
           this->battery_under_voltage_select_->map_and_publish(value);
         }
 
+        // SELECT OPTION for battery_bulk_voltage
         if (this->battery_bulk_voltage_) {
           this->battery_bulk_voltage_->publish_state(value_battery_bulk_voltage_ * 0.1);
 
           this->last_bulk_voltage_ = value_battery_bulk_voltage_;
-          if (this->battery_bulk_voltage_select_ != nullptr && !this->battery_bulk_voltage_select_->has_state()) {
+          if (this->battery_bulk_voltage_select_ != nullptr) {
             this->battery_bulk_voltage_select_->publish_state(this->format_voltage_string_(this->last_bulk_voltage_));
           }
         }
+        // SELECT OPTION for battery_float_voltage
         if (this->battery_float_voltage_) {
           this->battery_float_voltage_->publish_state(value_battery_float_voltage_ * 0.1);
 
           this->last_float_voltage_ = value_battery_float_voltage_;
-          if (this->battery_float_voltage_select_ != nullptr && !this->battery_float_voltage_select_->has_state()) {
+          if (this->battery_float_voltage_select_ != nullptr) {
             this->battery_float_voltage_select_->publish_state(this->format_voltage_string_(this->last_float_voltage_));
           }
         }
