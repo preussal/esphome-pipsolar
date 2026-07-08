@@ -857,23 +857,29 @@ void Pipsolar::dump_config() {
 }
 
 void Pipsolar::send_mchgv_command() {
-  // Sicherheits-Sperre: Erhaltungsladung (Float) MUSS kleiner als Hauptladung (Bulk) sein
   if (this->last_float_voltage_ >= this->last_bulk_voltage_) {
-    this->last_float_voltage_ = this->last_bulk_voltage_ - 1; // Erzwinge 0.1V weniger
+    this->last_float_voltage_ = this->last_bulk_voltage_ - 1;
 
-    // Korrigiere die Anzeige direkt in Home Assistant
     if (this->battery_float_voltage_select_ != nullptr) {
       this->battery_float_voltage_select_->publish_state(this->format_voltage_string_(this->last_float_voltage_));
     }
   }
 
-  // Definiert ein sicheres Zeichen-Array mit 32 Zeichen Platz
-  char command[32];
-  // Schreibt das Prefix ^S015 direkt mit in den Befehl hinein
-  sprintf(command, "^S015MCHGV%03u,%03u", this->last_bulk_voltage_, this->last_float_voltage_);
+  // Erstelle den reinen Text-Befehl (Länge: 17 Zeichen)
+  char raw_cmd[32];
+  sprintf(raw_cmd, "^S015MCHGV%03u,%03u", this->last_bulk_voltage_, this->last_float_voltage_);
 
-  // Nutzt die echte, existierende Schreibmethode deines Branches
-  this->switch_command(command);
+  // CRC über die 17 Zeichen berechnen
+  uint16_t crc = this->cal_crc_half_((uint8_t *)raw_cmd, 17);
+  uint8_t crc_high = (uint8_t)(crc >> 8);
+  uint8_t crc_low = (uint8_t)(crc & 0xFF);
+
+  // Das finale Paket zusammensetzen: Befehl + 2 Byte CRC + \r (Zeilenumbruch)
+  char final_package[36];
+  int len = sprintf(final_package, "%s%c%c\r", raw_cmd, crc_high, crc_low);
+
+  // Direkt als rohen String über die serielle Verbindung jagen
+  this->switch_command(std::string(final_package, len));
 }
 
 void Pipsolar::update() {}
