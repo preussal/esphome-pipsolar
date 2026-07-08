@@ -4,6 +4,7 @@ on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - main
+      - pi18
   pull_request:
   schedule:
     - cron: 0 12 * * *
@@ -39,9 +40,6 @@ jobs:
       - name: Write secrets.yaml
         shell: bash
         run: 'echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password" > secrets.yaml'
-      - name: Write tests/secrets.yaml
-        shell: bash
-        run: 'echo -e "wifi_ssid: ssid\nwifi_password: password\nmqtt_host: host\nmqtt_username: username\nmqtt_password: password" > tests/secrets.yaml'
       - run: |
           for YAML in esp*.yaml; do
             esphome config $YAML
@@ -50,6 +48,7 @@ jobs:
           for YAML in tests/esp*.yaml; do
             esphome config $YAML
           done
+
 
   esphome-compile:
     runs-on: ubuntu-latest
