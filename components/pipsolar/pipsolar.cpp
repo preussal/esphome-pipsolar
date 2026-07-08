@@ -867,12 +867,13 @@ void Pipsolar::send_mchgv_command() {
     }
   }
 
+  // Definiert ein sicheres Zeichen-Array mit 32 Zeichen Platz
   char command[32];
-  sprintf(command, "MCHGV%03u,%03u", this->last_bulk_voltage_, this->last_float_voltage_);
+  // Schreibt das Prefix ^S015 direkt mit in den Befehl hinein
+  sprintf(command, "^S015MCHGV%03u,%03u", this->last_bulk_voltage_, this->last_float_voltage_);
 
-  // Sendet den kombinierten String mit PI18-Befehlslänge ^S015 an das Protokoll
-  this->write_command_with_prefix_and_crc("^S015", command);
-}
+  // Nutzt die echte, existierende Schreibmethode deines Branches
+  this->write_command(command);
 
 
 void Pipsolar::update() {}

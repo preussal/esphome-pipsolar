@@ -222,7 +222,7 @@ class Pipsolar : public uart::UARTDevice, public PollingComponent {
   select::Select *battery_float_voltage_select_{nullptr};
 
   std::string format_voltage_string_(uint16_t value) {
-    char buf[10];
+    char buf[16];
     sprintf(buf, "%.1f", value / 10.0f);
     return std::string(buf);
   }
