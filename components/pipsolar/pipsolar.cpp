@@ -874,7 +874,7 @@ void Pipsolar::send_mchgv_command() {
 
   // Nutzt die echte, existierende Schreibmethode deines Branches
   this->switch_command(command);
-
+}
 
 void Pipsolar::update() {}
 
